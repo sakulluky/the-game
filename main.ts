@@ -15,42 +15,52 @@ input.onButtonPressed(Button.A, function () {
 })
 function Render () {
     y = 2
-    for (let i = 0; i <= 5; i++) {
+    x = 2
+    for (let i = 0; i <= 5; i++) 
+    {
         x = 2
-        for (let j = 0; j <= 5; j++) {
-            if (isWall[playerPos[0] + x][playerPos[1] + y] == true) 
+        for (let j = 0; j <= 5; j++) 
+        {
+            if (isWall[playerPos[0] + x][playerPos[1] + y]) 
             {
-                led.plot(x + 2, y - 2)
+                led.plot(x + 2, y + 2)
             } else 
             {
-                led.unplot(x + 2, y - 2)
+                led.unplot(x + 2, y + 2)
             }
-            x - 1
+            x -= 1
         }
-        y - 1
+        y -= 1
     }
-
+    
+    led.plot(2, 2)
 }
-input.onButtonPressed(Button.B, function () {
-    playerPos[0] = playerPos[0] + rotation[0]
-    playerPos[1] = playerPos[1] + rotation[1]
+input.onButtonPressed(Button.B, function () 
+{
+    if (!isWall[playerPos[0] + rotation[0]][playerPos[1] + rotation[1]])
+    {
+        playerPos[0] = playerPos[0] + rotation[0]
+        playerPos[1] = playerPos[1] + rotation[1]
+    }
 })
 let playerPos: number[] = []
 let rotation: number[] = []
 let isWall: boolean[][] = []
-let x = 0
 let y = 0
+let x = 0
 isWall = [
-[true,true,true,true,true,true,true,true,true,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,false,false,false,false,false,false,false,false,true],
-[true,true,true,true,true,true,true,true,true,true]
+    [false, false, false, false, false, false, false, false, false, false, false, false],
+    [false, true,true,true,true,true,true,true,true,true,true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true, false, false, false, false, false, false, false, false, true, false],
+    [false, true,true,true,true,true,true,true,true,true,true, false],
+    [false, false, false, false, false, false, false, false, false, false, false, false]
 ]
 rotation = [1, 0]
 playerPos = [5, 5]
