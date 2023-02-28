@@ -2,26 +2,34 @@ input.onButtonPressed(Button.A, function () {
     if (rotation[0] == 1 && rotation[1] == 0) {
         rotation[0] = 0
         rotation[1] = -1
+
+        arrow = 0
     } else if (rotation[0] == 0 && rotation[1] == -1) {
         rotation[0] = -1
         rotation[1] = 0
+
+        arrow = 6
     } else if (rotation[0] == -1 && rotation[1] == 0) {
         rotation[0] = 0
         rotation[1] = 1
+
+        arrow = 4
     } else if (rotation[0] == 0 && rotation[1] == 1) {
         rotation[0] = 1
         rotation[1] = 0
+
+        arrow = 2
     }
 })
 function Render () {
-    y = 2
-    x = 2
+    y = 3
+    x = 3
     for (let i = 0; i <= 5; i++) 
     {
-        x = 2
+        x = 3
         for (let j = 0; j <= 5; j++) 
         {
-            if (isWall[playerPos[0] + x][playerPos[1] + y]) 
+            if (word[playerPos[0] + x][playerPos[1] + y] == 1) 
             {
                 led.plot(x + 2, y + 2)
             } else 
@@ -37,34 +45,48 @@ function Render () {
 }
 input.onButtonPressed(Button.B, function () 
 {
-    if (!isWall[playerPos[0] + rotation[0]][playerPos[1] + rotation[1]])
+    if (word[playerPos[0] + rotation[0]][playerPos[1] + rotation[1]] != 1)
     {
         playerPos[0] = playerPos[0] + rotation[0]
         playerPos[1] = playerPos[1] + rotation[1]
     }
+
 })
 let playerPos: number[] = []
 let rotation: number[] = []
-let isWall: boolean[][] = []
+let word: number[][] = []
 let y = 0
 let x = 0
-isWall = [
-    [false, false, false, false, false, false, false, false, false, false, false, false],
-    [false, true,true,true,true,true,true,true,true,true,true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true, false, false, false, false, false, false, false, false, true, false],
-    [false, true,true,true,true,true,true,true,true,true,true, false],
-    [false, false, false, false, false, false, false, false, false, false, false, false]
+let canRender = true
+let arrow = 2
+word = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 rotation = [1, 0]
 playerPos = [5, 5]
 led.plot(2, 2)
-loops.everyInterval(500, function () {
+loops.everyInterval(500, function () 
+{
     Render()
+})
+input.onButtonPressed(Button.AB, function() 
+{
+    canRender = false
+    basic.showArrow(arrow)
+
+    basic.pause(600)
+    canRender = true
+    
 })
