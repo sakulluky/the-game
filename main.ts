@@ -3,22 +3,22 @@ input.onButtonPressed(Button.A, function () {
         rotation[0] = 0
         rotation[1] = -1
 
-        arrow = 0
+        arrow = 6
     } else if (rotation[0] == 0 && rotation[1] == -1) {
         rotation[0] = -1
         rotation[1] = 0
 
-        arrow = 6
+        arrow = 0
     } else if (rotation[0] == -1 && rotation[1] == 0) {
         rotation[0] = 0
         rotation[1] = 1
 
-        arrow = 4
+        arrow = 2
     } else if (rotation[0] == 0 && rotation[1] == 1) {
         rotation[0] = 1
         rotation[1] = 0
 
-        arrow = 2
+        arrow = 4
     }
 })
 function Render () {
@@ -29,10 +29,15 @@ function Render () {
         x = 3
         for (let j = 0; j <= 5; j++) 
         {
-            if (word[playerPos[0] + x][playerPos[1] + y] == 1) 
+            if (word[playerPos[0] + y][playerPos[1] + x] == 1) 
             {
                 led.plot(x + 2, y + 2)
-            } else 
+            } else if (word[playerPos[0] + y][playerPos[1] + x] == 2)
+            {
+                led.plot(x + 2, y + 2)
+                
+                led.plotBrightness(x + 2, y + 2, 100)
+            }else
             {
                 led.unplot(x + 2, y + 2)
             }
@@ -58,16 +63,16 @@ let word: number[][] = []
 let y = 0
 let x = 0
 let canRender = true
-let arrow = 2
+let arrow = 4
 word = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 2, 0, 0, 0, 0, 1, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
