@@ -1,26 +1,83 @@
+let playerPos: number[] = []
+let playerRotation: number[] = []
+let canRender = true
+let arrow = 4
+let word: number[][] = []
+let y = 0
+let x = 0
+
+playerRotation = [1, 0]
+playerPos = [5, 5]
+led.plot(2, 2)
+
+//radio
+radio.setGroup(369)
+
+//word 
+// 0 = nothing
+// 1 = wall (2 = test path)
+word = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 2, 2, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+//Rotate player
 input.onButtonPressed(Button.A, function () {
-    if (rotation[0] == 1 && rotation[1] == 0) {
-        rotation[0] = 0
-        rotation[1] = -1
+    if (playerRotation[0] == 1 && playerRotation[1] == 0) {
+        playerRotation[0] = 0
+        playerRotation[1] = -1
 
         arrow = 6
-    } else if (rotation[0] == 0 && rotation[1] == -1) {
-        rotation[0] = -1
-        rotation[1] = 0
+    } else if (playerRotation[0] == 0 && playerRotation[1] == -1) {
+        playerRotation[0] = -1
+        playerRotation[1] = 0
 
         arrow = 0
-    } else if (rotation[0] == -1 && rotation[1] == 0) {
-        rotation[0] = 0
-        rotation[1] = 1
+    } else if (playerRotation[0] == -1 && playerRotation[1] == 0) {
+        playerRotation[0] = 0
+        playerRotation[1] = 1
 
         arrow = 2
-    } else if (rotation[0] == 0 && rotation[1] == 1) {
-        rotation[0] = 1
-        rotation[1] = 0
+    } else if (playerRotation[0] == 0 && playerRotation[1] == 1) {
+        playerRotation[0] = 1
+        playerRotation[1] = 0
 
         arrow = 4
     }
 })
+//Move player
+input.onButtonPressed(Button.B, function () 
+{
+    if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1)
+    {
+        playerPos[0] = playerPos[0] + playerRotation[0]
+        playerPos[1] = playerPos[1] + playerRotation[1]
+    }
+
+})
+//Show player direction
+input.onButtonPressed(Button.AB, function() 
+{
+    canRender = false
+    basic.showArrow(arrow)
+
+    basic.pause(600)
+    canRender = true
+    
+})
+
+//Renders the word
 function Render () {
     y = 3
     x = 3
@@ -48,50 +105,9 @@ function Render () {
     
     led.plot(2, 2)
 }
-input.onButtonPressed(Button.B, function () 
-{
-    if (word[playerPos[0] + rotation[0]][playerPos[1] + rotation[1]] != 1)
-    {
-        playerPos[0] = playerPos[0] + rotation[0]
-        playerPos[1] = playerPos[1] + rotation[1]
-    }
 
-})
-let playerPos: number[] = []
-let rotation: number[] = []
-let word: number[][] = []
-let y = 0
-let x = 0
-let canRender = true
-let arrow = 4
-word = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 2, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
-rotation = [1, 0]
-playerPos = [5, 5]
-led.plot(2, 2)
 loops.everyInterval(500, function () 
 {
     Render()
 })
-input.onButtonPressed(Button.AB, function() 
-{
-    canRender = false
-    basic.showArrow(arrow)
 
-    basic.pause(600)
-    canRender = true
-    
-})
