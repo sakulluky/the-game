@@ -122,8 +122,4 @@ loops.everyInterval(100, function ()
         Render()
     }
 
-    if(playerPos == new number[])
-    {
-        GameOver()
-    }
 })
