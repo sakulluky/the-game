@@ -7,7 +7,7 @@ let y = 0
 let x = 0
 
 playerRotation = [1, 0]
-playerPos = [5, 5]
+playerPos = [2, 2]
 led.plot(2, 2)
 
 //radio
@@ -15,18 +15,19 @@ radio.setGroup(369)
 
 //word 
 // 0 = nothing
-// 1 = wall (2 = test path)
+// 1 = baseWall (2 = test path)
+// 3 = wall
 word = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 2, 2, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 3, 0, 0, 0, 3, 0, 0, 1, 0, 0],
+    [0, 1, 0, 3, 3, 3, 0, 0, 0, 3, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0],
+    [0, 1, 0, 3, 3, 0, 3, 3, 0, 0, 1, 0, 0],
+    [0, 1, 0, 3, 0, 0, 0, 3, 0, 3, 1, 0, 0],
+    [0, 1, 0, 0, 0, 3, 0, 3, 0, 0, 1, 0, 0],
+    [0, 1, 0, 3, 3, 0, 0, 0, 3, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -60,21 +61,22 @@ input.onButtonPressed(Button.A, function () {
 input.onButtonPressed(Button.B, function () 
 {
     if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1)
-    {
-        playerPos[0] = playerPos[0] + playerRotation[0]
-        playerPos[1] = playerPos[1] + playerRotation[1]
+    {  
+        if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 3)
+        {
+            playerPos[0] = playerPos[0] + playerRotation[0]
+            playerPos[1] = playerPos[1] + playerRotation[1]
+        }   
     }
-
 })
-//Show player direction
+
 input.onButtonPressed(Button.AB, function() 
 {
     canRender = false
     basic.showArrow(arrow)
 
-    basic.pause(600)
-    canRender = true
-    
+    basic.pause(750)
+    canRender = true 
 })
 
 //Renders the word
@@ -86,7 +88,7 @@ function Render () {
         x = 3
         for (let j = 0; j <= 5; j++) 
         {
-            if (word[playerPos[0] + y][playerPos[1] + x] == 1) 
+            if (word[playerPos[0] + y][playerPos[1] + x] == 1 || word[playerPos[0] + y][playerPos[1] + x] == 3 )
             {
                 led.plot(x + 2, y + 2)
             } else if (word[playerPos[0] + y][playerPos[1] + x] == 2)
@@ -106,8 +108,22 @@ function Render () {
     led.plot(2, 2)
 }
 
-loops.everyInterval(500, function () 
-{
-    Render()
-})
+    function GameOver()
+    {
+        canRender  = false
 
+        basic.showString("GG")
+    }
+
+loops.everyInterval(100, function () 
+{
+    if(canRender)
+    {
+        Render()
+    }
+
+    if(playerPos == new number[])
+    {
+        GameOver()
+    }
+})
