@@ -1,4 +1,5 @@
 let playerPos: number[] = []
+let player2Pos: number[] = []
 let playerRotation: number[] = []
 let canRender = true
 let arrow = 4
@@ -6,28 +7,29 @@ let word: number[][] = []
 let y = 0
 let x = 0
 
+radio.setGroup(32)
+
 playerRotation = [1, 0]
 playerPos = [2, 2]
+player2Pos = [3, 3]
 led.plot(2, 2)
-
-//radio
-radio.setGroup(369)
 
 //word 
 // 0 = nothing
 // 1 = baseWall (2 = test path)
 // 3 = wall
+// 4 = player 2
 word = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 1, 0, 3, 0, 0, 0, 3, 0, 0, 1, 0, 0],
-    [0, 1, 0, 3, 3, 3, 0, 0, 0, 3, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0],
-    [0, 1, 0, 3, 3, 0, 3, 3, 0, 0, 1, 0, 0],
-    [0, 1, 0, 3, 0, 0, 0, 3, 0, 3, 1, 0, 0],
-    [0, 1, 0, 0, 0, 3, 0, 3, 0, 0, 1, 0, 0],
-    [0, 1, 0, 3, 3, 0, 0, 0, 3, 0, 1, 0, 0],
-    [0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -66,17 +68,36 @@ input.onButtonPressed(Button.B, function ()
         {
             playerPos[0] = playerPos[0] + playerRotation[0]
             playerPos[1] = playerPos[1] + playerRotation[1]
+
+            radio.sendValue("playerX", playerPos[0])
+            radio.sendValue("playerY", playerPos[1])
         }   
     }
 })
 
-input.onButtonPressed(Button.AB, function() 
+// recives player 2 position
+radio.onReceivedValue(function(name: string, value: number) 
 {
-    canRender = false
-    basic.showArrow(arrow)
+    word[player2Pos[0]][ player2Pos[1]] = 0
 
-    basic.pause(750)
-    canRender = true 
+    if (name == "playerX")
+    {
+        player2Pos[0] = value
+    }
+    else
+    {
+        player2Pos[0] == 0
+    }
+    if (name == "playerY") {
+        player2Pos[1] = value
+    }
+    else
+    {
+        player2Pos[1] == 0
+    }
+
+    word[player2Pos[0]][player2Pos[1]] = 4
+
 })
 
 //Renders the word
@@ -96,7 +117,12 @@ function Render () {
                 led.plot(x + 2, y + 2)
                 
                 led.plotBrightness(x + 2, y + 2, 100)
-            }else
+
+            } else if (word[playerPos[0] + y][playerPos[1] + x] == 4 )
+            {
+                led.plot(x+2, y+2)
+            }
+            else
             {
                 led.unplot(x + 2, y + 2)
             }
@@ -108,14 +134,7 @@ function Render () {
     led.plot(2, 2)
 }
 
-    function GameOver()
-    {
-        canRender  = false
-
-        basic.showString("GG")
-    }
-
-loops.everyInterval(100, function () 
+loops.everyInterval(25, function () 
 {
     if(canRender)
     {
