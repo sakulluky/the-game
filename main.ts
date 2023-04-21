@@ -1,11 +1,16 @@
+let imPlayer = 1
 let playerPos: number[] = []
 let player2Pos: number[] = []
 let playerRotation: number[] = []
 let canRender = true
+let canMove = true
+let canPredatBabu = true
+let xPlayerMaBabu = 0
 let arrow = 4
 let word: number[][] = []
 let y = 0
 let x = 0
+let time = 0
 
 radio.setGroup(32)
 
@@ -36,41 +41,49 @@ word = [
 ]
 
 //Rotate player
-input.onButtonPressed(Button.A, function () {
-    if (playerRotation[0] == 1 && playerRotation[1] == 0) {
-        playerRotation[0] = 0
-        playerRotation[1] = -1
+input.onButtonPressed(Button.A, function () 
+{
+    if (canMove == true)
+    {
+         if (playerRotation[0] == 1 && playerRotation[1] == 0) {
+            playerRotation[0] = 0
+            playerRotation[1] = -1
 
         arrow = 6
-    } else if (playerRotation[0] == 0 && playerRotation[1] == -1) {
-        playerRotation[0] = -1
-        playerRotation[1] = 0
+        } else if (playerRotation[0] == 0 && playerRotation[1] == -1) {
+            playerRotation[0] = -1
+            playerRotation[1] = 0
 
         arrow = 0
-    } else if (playerRotation[0] == -1 && playerRotation[1] == 0) {
-        playerRotation[0] = 0
-        playerRotation[1] = 1
+        } else if (playerRotation[0] == -1 && playerRotation[1] == 0) {
+            playerRotation[0] = 0
+            playerRotation[1] = 1
 
         arrow = 2
-    } else if (playerRotation[0] == 0 && playerRotation[1] == 1) {
-        playerRotation[0] = 1
-        playerRotation[1] = 0
+        } else if (playerRotation[0] == 0 && playerRotation[1] == 1) {
+            playerRotation[0] = 1
+            playerRotation[1] = 0
 
-        arrow = 4
+            arrow = 4   
+        }
+
     }
 })
 //Move player
 input.onButtonPressed(Button.B, function () 
 {
-    if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1)
-    {  
-        if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 3)
-        {
-            playerPos[0] = playerPos[0] + playerRotation[0]
-            playerPos[1] = playerPos[1] + playerRotation[1]
+    if (canMove)
+    {
+         if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1)
+        {  
+            if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 3)
+            {
+                playerPos[0] = playerPos[0] + playerRotation[0]
+                playerPos[1] = playerPos[1] + playerRotation[1]
 
-            radio.sendValue("playerX", playerPos[0])
-            radio.sendValue("playerY", playerPos[1])
+                radio.sendValue("playerX", playerPos[0])
+                radio.sendValue("playerY", playerPos[1])
+            }   
         }   
     }
 })
@@ -134,6 +147,7 @@ function Render () {
     led.plot(2, 2)
 }
 
+//Render loops
 loops.everyInterval(25, function () 
 {
     if(canRender)
@@ -142,3 +156,42 @@ loops.everyInterval(25, function ()
     }
 
 })
+
+loops.everyInterval(1000, function() {
+    time += 1 
+})
+
+//Check for predání babi
+loops.everyInterval(100, function() {
+    if (playerPos == player2Pos)
+    {
+        if(canPredatBabu = true)
+        {
+            PredatBabu() 
+
+            canPredatBabu = false
+            basic.pause(2000)
+            canPredatBabu = true  
+        }        
+    }
+})
+
+function PredatBabu()
+{
+    
+    if (xPlayerMaBabu = 1)
+    {
+        xPlayerMaBabu = 2
+    }
+    else if (xPlayerMaBabu = 2) 
+    {
+        xPlayerMaBabu = 1
+    }
+    
+    if(xPlayerMaBabu == imPlayer)
+    {
+        canRender = false
+        basic.showString("Jsem Baba")
+    }
+}
+
