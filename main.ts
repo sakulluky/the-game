@@ -1,11 +1,9 @@
-let imPlayer = 1
 let playerPos: number[] = []
 let player2Pos: number[] = []
 let playerRotation: number[] = []
+let player2Rotation = [0, 0]
 let canRender = true
 let canMove = true
-let canPredatBabu = true
-let xPlayerMaBabu = 0
 let arrow = 4
 let word: number[][] = []
 let y = 0
@@ -67,6 +65,9 @@ input.onButtonPressed(Button.A, function ()
             arrow = 4   
         }
 
+        radio.sendValue("rotX", playerRotation[0])
+        radio.sendValue("rotY", playerRotation[1])
+
     }
 })
 //Move player
@@ -88,6 +89,21 @@ input.onButtonPressed(Button.B, function ()
     }
 })
 
+input.buttonIsPressed(Button.AB)
+{
+    radio.sendValue("PlacedWall", 1)
+    PlaceWall(playerPos, playerRotation)
+}
+
+function PlaceWall(position_: number[], rotation_: number[])
+{
+
+    for (let i = 0; i <= 3; i++)
+     {
+        word[playerPos[0] + playerRotation[0] + i ][playerPos[1] + playerRotation[1] + i ] = 2
+    }   
+}
+
 // recives player 2 position
 radio.onReceivedValue(function(name: string, value: number) 
 {
@@ -97,16 +113,20 @@ radio.onReceivedValue(function(name: string, value: number)
     {
         player2Pos[0] = value
     }
-    else
-    {
-        player2Pos[0] == 0
-    }
     if (name == "playerY") {
         player2Pos[1] = value
     }
-    else
+
+    if (name == "rotX")
     {
-        player2Pos[1] == 0
+        player2Rotation[0] = value
+    }
+    if (name == "rotY") {
+        player2Rotation[1] = value
+    }
+
+    if (name == "PlacedWall") {
+        PlaceWall(player2Rotation, player2Pos)
     }
 
     word[player2Pos[0]][player2Pos[1]] = 4
@@ -161,37 +181,4 @@ loops.everyInterval(1000, function() {
     time += 1 
 })
 
-//Check for predání babi
-loops.everyInterval(100, function() {
-    if (playerPos == player2Pos)
-    {
-        if(canPredatBabu = true)
-        {
-            PredatBabu() 
-
-            canPredatBabu = false
-            basic.pause(2000)
-            canPredatBabu = true  
-        }        
-    }
-})
-
-function PredatBabu()
-{
-    
-    if (xPlayerMaBabu = 1)
-    {
-        xPlayerMaBabu = 2
-    }
-    else if (xPlayerMaBabu = 2) 
-    {
-        xPlayerMaBabu = 1
-    }
-    
-    if(xPlayerMaBabu == imPlayer)
-    {
-        canRender = false
-        basic.showString("Jsem Baba")
-    }
-}
 
