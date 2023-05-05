@@ -1,7 +1,6 @@
 let playerPos: number[] = []
 let player2Pos: number[] = []
 let playerRotation: number[] = []
-let player2Rotation = [0, 0]
 let canRender = true
 let canMove = true
 let arrow = 4
@@ -10,12 +9,16 @@ let y = 0
 let x = 0
 let time = 0
 
+let enemyPos: number[] = []
+let eGoTo = null
+
 radio.setGroup(32)
 
 playerRotation = [1, 0]
 playerPos = [2, 2]
-player2Pos = [3, 3]
+player2Pos = [2, 2]
 led.plot(2, 2)
+enemyPos = [9, 9]
 
 //word 
 // 0 = nothing
@@ -38,147 +41,122 @@ word = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
+Render()
+
 //Rotate player
-input.onButtonPressed(Button.A, function () 
-{
-    if (canMove == true)
-    {
-         if (playerRotation[0] == 1 && playerRotation[1] == 0) {
+input.onButtonPressed(Button.A, function () {
+    if (canMove == true) {
+        if (playerRotation[0] == 1 && playerRotation[1] == 0) {
             playerRotation[0] = 0
             playerRotation[1] = -1
 
-        arrow = 6
+            arrow = 6
         } else if (playerRotation[0] == 0 && playerRotation[1] == -1) {
             playerRotation[0] = -1
             playerRotation[1] = 0
 
-        arrow = 0
+            arrow = 0
         } else if (playerRotation[0] == -1 && playerRotation[1] == 0) {
             playerRotation[0] = 0
             playerRotation[1] = 1
 
-        arrow = 2
+            arrow = 2
         } else if (playerRotation[0] == 0 && playerRotation[1] == 1) {
             playerRotation[0] = 1
             playerRotation[1] = 0
 
-            arrow = 4   
+            arrow = 4
         }
-
-        radio.sendValue("rotX", playerRotation[0])
-        radio.sendValue("rotY", playerRotation[1])
-
     }
 })
 //Move player
-input.onButtonPressed(Button.B, function () 
-{
-    if (canMove)
-    {
-         if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1)
-        {  
-            if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 3)
-            {
+input.onButtonPressed(Button.B, function () {
+    if (canMove) {
+        if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 1) {
+            if (word[playerPos[0] + playerRotation[0]][playerPos[1] + playerRotation[1]] != 3) {
                 playerPos[0] = playerPos[0] + playerRotation[0]
                 playerPos[1] = playerPos[1] + playerRotation[1]
 
+                Render()
+
                 radio.sendValue("playerX", playerPos[0])
                 radio.sendValue("playerY", playerPos[1])
-            }   
-        }   
+            }
+        }
     }
 })
 
-input.buttonIsPressed(Button.AB)
-{
-    radio.sendValue("PlacedWall", 1)
-    PlaceWall(playerPos, playerRotation)
-}
-
-function PlaceWall(position_: number[], rotation_: number[])
-{
-
-    for (let i = 0; i <= 3; i++)
-     {
-        word[playerPos[0] + playerRotation[0] + i ][playerPos[1] + playerRotation[1] + i ] = 2
-    }   
-}
-
 // recives player 2 position
-radio.onReceivedValue(function(name: string, value: number) 
-{
-    word[player2Pos[0]][ player2Pos[1]] = 0
+radio.onReceivedValue(function (name: string, value: number) {
+    word[player2Pos[0]][player2Pos[1]] = 0
 
-    if (name == "playerX")
-    {
+    if (name == "playerX") {
         player2Pos[0] = value
     }
     if (name == "playerY") {
         player2Pos[1] = value
     }
 
-    if (name == "rotX")
-    {
-        player2Rotation[0] = value
-    }
-    if (name == "rotY") {
-        player2Rotation[1] = value
-    }
-
-    if (name == "PlacedWall") {
-        PlaceWall(player2Rotation, player2Pos)
-    }
-
     word[player2Pos[0]][player2Pos[1]] = 4
+    Render()
 
 })
 
 //Renders the word
-function Render () {
+function Render() {
     y = 3
     x = 3
-    for (let i = 0; i <= 5; i++) 
-    {
+    for (let i = 0; i <= 5; i++) {
         x = 3
-        for (let j = 0; j <= 5; j++) 
-        {
-            if (word[playerPos[0] + y][playerPos[1] + x] == 1 || word[playerPos[0] + y][playerPos[1] + x] == 3 )
-            {
+        for (let j = 0; j <= 5; j++) {
+            if (word[playerPos[0] + y][playerPos[1] + x] == 1 || word[playerPos[0] + y][playerPos[1] + x] == 3) {
                 led.plot(x + 2, y + 2)
-            } else if (word[playerPos[0] + y][playerPos[1] + x] == 2)
-            {
+            } else if (word[playerPos[0] + y][playerPos[1] + x] == 2) {
                 led.plot(x + 2, y + 2)
-                
+
                 led.plotBrightness(x + 2, y + 2, 100)
 
-            } else if (word[playerPos[0] + y][playerPos[1] + x] == 4 )
-            {
-                led.plot(x+2, y+2)
+            } else if (word[playerPos[0] + y][playerPos[1] + x] == 4) {
+                led.plot(x + 2, y + 2)
             }
-            else
-            {
+            else {
                 led.unplot(x + 2, y + 2)
             }
             x -= 1
         }
         y -= 1
     }
-    
+
     led.plot(2, 2)
 }
 
-//Render loops
-loops.everyInterval(25, function () 
+/*//Render loops
+loops.everyInterval(25, function ()
 {
     if(canRender)
     {
         Render()
+    } 
+
+})
+*/
+
+function CalculateDistanc()
+{
+
+    let delka1 = (enemyPos[0] - playerPos[0]) * (enemyPos[0] - playerPos[0]) + (enemyPos[1] - playerPos[1]) * (enemyPos[1] - playerPos[1])
+    delka1 = Math.sqrt(delka1)
+
+    let delka2 = (enemyPos[0] - player2Pos[0]) * (enemyPos[0] - player2Pos[0]) + (enemyPos[1] - player2Pos[1]) * (enemyPos[1] - player2Pos[1])
+    delka2 = Math.sqrt(delka1)
+
+    if (delka1 < delka2)
+    {
+        eGoTo = 1
+    }
+    else
+    {
+        eGoTo = 2
     }
 
-})
-
-loops.everyInterval(1000, function() {
-    time += 1 
-})
-
-
+}
