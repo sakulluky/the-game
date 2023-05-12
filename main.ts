@@ -10,7 +10,6 @@ let x = 0
 let time = 0
 
 let enemyPos: number[] = []
-let eGoTo = null
 
 radio.setGroup(32)
 
@@ -20,10 +19,12 @@ player2Pos = [2, 2]
 led.plot(2, 2)
 enemyPos = [9, 9]
 
+word[enemyPos[0]] [enemyPos[1]] = 2
+
 //word 
 // 0 = nothing
-// 1 = baseWall (2 = test path)
-// 3 = wall
+// 1 = baseWall
+// 2 = enemy
 // 4 = player 2
 word = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -114,7 +115,7 @@ function Render() {
             } else if (word[playerPos[0] + y][playerPos[1] + x] == 2) {
                 led.plot(x + 2, y + 2)
 
-                led.plotBrightness(x + 2, y + 2, 100)
+                led.plotBrightness(x + 2, y + 2, 50)
 
             } else if (word[playerPos[0] + y][playerPos[1] + x] == 4) {
                 led.plot(x + 2, y + 2)
@@ -130,33 +131,90 @@ function Render() {
     led.plot(2, 2)
 }
 
-/*//Render loops
-loops.everyInterval(25, function ()
-{
-    if(canRender)
-    {
-        Render()
-    } 
-
-})
-*/
-
 function CalculateDistanc()
 {
 
-    let delka1 = (enemyPos[0] - playerPos[0]) * (enemyPos[0] - playerPos[0]) + (enemyPos[1] - playerPos[1]) * (enemyPos[1] - playerPos[1])
+    let delka1 = mnozit((enemyPos[0] - playerPos[0]))+ mnozit((enemyPos[1] - playerPos[1]))
     delka1 = Math.sqrt(delka1)
 
-    let delka2 = (enemyPos[0] - player2Pos[0]) * (enemyPos[0] - player2Pos[0]) + (enemyPos[1] - player2Pos[1]) * (enemyPos[1] - player2Pos[1])
-    delka2 = Math.sqrt(delka1)
+    let delka2 = mnozit((enemyPos[0] - player2Pos[0]))+ mnozit((enemyPos[1] - player2Pos[1]))
 
     if (delka1 < delka2)
     {
-        eGoTo = 1
+        KamJdes(1)
     }
     else
     {
-        eGoTo = 2
+        KamJdes(2)
     }
 
+}
+
+function mnozit(cislo: number) {
+    cislo = cislo * cislo
+
+    return cislo
+}
+
+function KamJdes(enemyGoTO: number)
+{
+    if(enemyGoTO == 1)
+    {
+        if (Math.abs(enemyPos[0] - playerPos[0]) < Math.abs(enemyPos[1] - playerPos[1]))
+        {
+            if (enemyPos[0] - playerPos[0] > 0.1)
+            {
+                EnemyGo(0, 1)
+            }
+            else
+            {
+                EnemyGo(0, -1)
+            }
+        }
+        else
+        {
+            if (enemyPos[1] - playerPos[1] > 0.1)
+            {
+                EnemyGo(1, 1)
+            }
+            else
+            {
+                EnemyGo(1, -1)
+            }
+        }   
+    
+    }
+    else if(enemyGoTO == 2)
+    {
+        if (Math.abs(enemyPos[0] - playerPos[0]) < Math.abs(enemyPos[1] - playerPos[1])) 
+        {
+            if (enemyPos[0] - playerPos[0] > 0.1)
+            {
+                EnemyGo(0, 1)
+            }
+            else 
+            {
+                EnemyGo(0, -1)
+            }
+        }
+        else
+        {
+            if (enemyPos[1] - playerPos[1] > 0.1) 
+            {
+                EnemyGo(1, 1)
+            }
+            else 
+            {
+                EnemyGo(1, -1)
+            }
+        }
+
+    }
+}
+
+function EnemyGo(enemyParametr: number, plusminus: number)
+{
+    word[enemyPos[0]][enemyPos[1]] = 0
+    enemyPos[enemyParametr] = enemyPos[enemyParametr] + plusminus
+    word[enemyPos[0]][enemyPos[1]] = 2
 }
